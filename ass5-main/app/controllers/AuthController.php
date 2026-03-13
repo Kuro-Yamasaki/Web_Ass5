@@ -7,20 +7,25 @@ class AuthController {
     }
 
     public function register() {
+        // เช็คว่าส่งข้อมูลมาแบบ POST หรือไม่ (มาจากฟอร์ม)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'];
+            // สำคัญ: ทำการเข้ารหัสผ่าน (Hash) เพื่อความปลอดภัยก่อนบันทึกลงฐานข้อมูล จะไม่บันทึกรหัสผ่านตรงๆ
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $first_name = $_POST['first_name'];
             $last_name = $_POST['last_name'];
             $birthdate = $_POST['birthdate'];
             $phone = $_POST['phone'];
 
+            // เตรียมคำสั่งเพิ่มผู้ใช้ใหม่
             $sql = "INSERT INTO users (username, password, first_name, last_name, birthdate, phone) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->db->prepare($sql);
             
+            // ถ้าบันทึกสำเร็จ
             if ($stmt->execute([$username, $password, $first_name, $last_name, $birthdate, $phone])) {
+                // แสดง Popup (Alert) ผ่าน JavaScript แล้วเปลี่ยนหน้าไปที่หน้า Login
                 echo "<script>
                     alert('สมัครสมาชิกสำเร็จ!'); 
                     window.location.href = 'index.php?action=login'; 
@@ -35,14 +40,18 @@ class AuthController {
             $username = $_POST['username'];
             $password_input = $_POST['password'];
 
+
             $stmt = $this->db->prepare("SELECT * FROM users WHERE username = ?");
             $stmt->execute([$username]);
             $user = $stmt->fetch();
 
+            // ถ้าเจอผู้ใช้ และ รหัสผ่านที่พิมพ์มา(ที่ยังไม่เข้ารหัส) ตรงกับรหัสที่เข้ารหัสในฐานข้อมูล
             if ($user && password_verify($password_input, $user['password'])) {
+
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['first_name'] = $user['first_name']; 
+
                 header("Location: index.php?action=home");
                 exit();
             } else {
@@ -52,6 +61,7 @@ class AuthController {
     }
 
     public function logout() {
+        // ทำลายข้อมูล Session (ลบความจำว่าล็อกอินอยู่)
         session_destroy();
         header("Location: index.php?action=login");
         exit();

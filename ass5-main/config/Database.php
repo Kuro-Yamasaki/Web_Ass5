@@ -1,14 +1,17 @@
 <?php
 class Database {
+    // ตั้งค่ารหัสผ่านและชื่อฐานข้อมูล
     private $host = "localhost";
     private $db_name = "as5_db"; 
     private $username = "ass5reg";
     private $password = "123";
     public $conn;
 
+
     public function getConnection() {
         $this->conn = null;
         try {
+            
             $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
             $this->conn->exec("set names utf8");
         } catch(PDOException $e) {
