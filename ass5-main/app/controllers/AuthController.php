@@ -7,25 +7,22 @@ class AuthController {
     }
 
     public function register() {
-        // เช็คว่าส่งข้อมูลมาแบบ POST หรือไม่ (มาจากฟอร์ม)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'];
-            // สำคัญ: ทำการเข้ารหัสผ่าน (Hash) เพื่อความปลอดภัยก่อนบันทึกลงฐานข้อมูล จะไม่บันทึกรหัสผ่านตรงๆ
+            // ทำการเข้ารหัสผ่าน (Hash) เพื่อความปลอดภัยก่อนบันทึกลงฐานข้อมูล
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $first_name = $_POST['first_name'];
             $last_name = $_POST['last_name'];
             $birthdate = $_POST['birthdate'];
             $phone = $_POST['phone'];
 
-            // เตรียมคำสั่งเพิ่มผู้ใช้ใหม่
+            
             $sql = "INSERT INTO users (username, password, first_name, last_name, birthdate, phone) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             
             $stmt = $this->db->prepare($sql);
             
-            // ถ้าบันทึกสำเร็จ
             if ($stmt->execute([$username, $password, $first_name, $last_name, $birthdate, $phone])) {
-                // แสดง Popup (Alert) ผ่าน JavaScript แล้วเปลี่ยนหน้าไปที่หน้า Login
                 echo "<script>
                     alert('สมัครสมาชิกสำเร็จ!'); 
                     window.location.href = 'index.php?action=login'; 

@@ -47,24 +47,20 @@ switch ($action) {
         break;
 
     case 'logout':
-        // ออกจากระบบ
         $auth = new AuthController($db);
         $auth->logout();
         break;
 
     case 'register_user':
-        // แสดงหน้าจอสมัครสมาชิก
         include "../app/view/register_user.php";
         break;
 
     case 'doRegister':
-        // รับข้อมูลจากฟอร์มสมัครสมาชิกไปประมวลผล
         $auth = new AuthController($db);
         $auth->register();
         break;
 
     case 'home':
-        // แสดงหน้าจอแรกหลังล็อกอิน
         include "../app/view/home.php";
         break;
 
